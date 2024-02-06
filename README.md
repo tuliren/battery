@@ -1,6 +1,6 @@
-# Nextjs App Template
+# Battery
 
-[![Build](https://github.com/tuliren/nextjs-app-template/actions/workflows/build.yaml/badge.svg)](https://github.com/tuliren/nextjs-app-template/actions/workflows/build.yaml)
+[![Build](https://github.com/tuliren/battery/actions/workflows/build.yaml/badge.svg)](https://github.com/tuliren/battery/actions/workflows/build.yaml)
 
 ## Development
 
