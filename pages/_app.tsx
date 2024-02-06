@@ -1,5 +1,4 @@
-import { AppShell, Container, MantineProvider } from '@mantine/core';
-import { Notifications } from '@mantine/notifications';
+import { Container, MantineProvider } from '@mantine/core';
 import PlausibleProvider from 'next-plausible';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
@@ -12,27 +11,17 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>App Title</title>
-        <meta name="description" content="app-title" />
+        <title>⚡Battery⚡</title>
+        <meta name="description" content="A battery" />
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <PlausibleProvider domain="app-url.com" enabled={enableAnalytics}>
-        <MantineProvider
-          withGlobalStyles
-          withNormalizeCSS
-          theme={{
-            /** mantine theme override */
-            colorScheme: 'light',
-          }}
-        >
-          <Notifications />
-          <AppShell padding="lg" header={<></>} footer={<></>}>
-            <Container size="xl">
-              <Component {...pageProps} />
-            </Container>
-          </AppShell>
+      <PlausibleProvider domain="battery.plux.dev" enabled={enableAnalytics}>
+        <MantineProvider>
+          <Container size="xl">
+            <Component {...pageProps} />
+          </Container>
         </MantineProvider>
       </PlausibleProvider>
     </>
