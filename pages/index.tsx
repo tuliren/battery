@@ -1,4 +1,4 @@
-import { Box, Center, Overlay, Paper, Progress, useMantineTheme } from '@mantine/core';
+import { Box, Paper, useMantineTheme } from '@mantine/core';
 import { IconBolt } from '@tabler/icons-react';
 import type { NextPage } from 'next';
 
