@@ -1,4 +1,5 @@
 import { Container, MantineProvider } from '@mantine/core';
+import '@mantine/core/styles.css';
 import PlausibleProvider from 'next-plausible';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
