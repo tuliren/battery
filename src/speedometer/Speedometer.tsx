@@ -153,7 +153,12 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
                 ) : speedCategory === SpeedCategory.SLOW ? (
                   <></>
                 ) : (
-                  <Text c={displayColor} fw={800} style={{ fontSize: 'calc(4.6em)' }}>
+                  <Text
+                    c={displayColor}
+                    fw={800}
+                    style={{ fontSize: 'calc(4.6em)' }}
+                    className={speedCategory === SpeedCategory.OVER ? styles.flash : ''}
+                  >
                     {speed}
                   </Text>
                 )}
