@@ -10,8 +10,18 @@ import {
   Title,
   useMantineTheme,
 } from '@mantine/core';
-import { IconCar, IconPlane, IconRocket, IconSailboat2 } from '@tabler/icons-react';
-import { FC, useState } from 'react';
+import {
+  IconCar,
+  IconCaretDown,
+  IconCaretUp,
+  IconCaretUpDown,
+  IconPlane,
+  IconRocket,
+  IconSailboat2,
+  IconTrendingDown,
+  IconTrendingUp,
+} from '@tabler/icons-react';
+import { FC, useEffect, useState } from 'react';
 
 import ControlButtons from '@/common/ControlButtons';
 import NumberSlider from '@/common/NumberSlider';
@@ -31,6 +41,12 @@ enum SpeedCategory {
   BELOW = 'below',
   OVER = 'over',
   TOO_FAST = 'too_fast',
+}
+
+enum Activity {
+  Accelerating = 'accelerating',
+  Decelerating = 'decelerating',
+  Idle = 'idle',
 }
 
 const getSpeedCategory = (speed: number, speedLimit: number): SpeedCategory => {
@@ -62,9 +78,35 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
   const theme = useMantineTheme();
   const [speed, setSpeed] = useState(25);
   const [speedLimit, setSpeedLimit] = useState(30);
+  const [activeStatus, setActiveStatus] = useState<Activity>(Activity.Idle);
+
+  const minSpeed = minSpeedLimit - slowDeltaThreshold - 5;
+  const maxSpeed = maxSpeedLimit + fastDeltaThreshold + 20;
 
   const speedCategory = getSpeedCategory(speed, speedLimit);
   const displayColor = getSpeedColor(theme, speedCategory);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (activeStatus === Activity.Accelerating) {
+      if (speed < maxSpeed) {
+        interval = setInterval(() => {
+          setSpeed((prev) => (prev + 1 > maxSpeed ? maxSpeed : prev + 1));
+        }, 50);
+      } else {
+        setActiveStatus(Activity.Idle);
+      }
+    } else if (activeStatus === Activity.Decelerating) {
+      if (speed > minSpeed) {
+        interval = setInterval(() => {
+          setSpeed((prev) => (prev - 1 < minSpeed ? minSpeed : prev - 1));
+        }, 50);
+      } else {
+        setActiveStatus(Activity.Idle);
+      }
+    }
+    return () => clearInterval(interval);
+  }, [activeStatus, maxSpeed, minSpeed, speed]);
 
   return (
     <Center>
@@ -202,8 +244,8 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
                 color="gray"
                 value={speed}
                 setValue={setSpeed}
-                min={minSpeedLimit - slowDeltaThreshold - 5}
-                max={maxSpeedLimit + fastDeltaThreshold + 20}
+                min={minSpeed}
+                max={maxSpeed}
                 marks={[
                   { value: 25, label: 25 },
                   { value: 45, label: 45 },
@@ -240,7 +282,7 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
                   },
                   {
                     value: SpeedCategory.BELOW,
-                    color: theme.colors.yellow[5],
+                    color: theme.colors.green[5],
                     icon: IconCar,
                     label: 'Slow',
                   },
@@ -255,6 +297,40 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
                     color: theme.colors.red[5],
                     icon: IconRocket,
                     label: 'Fastest',
+                  },
+                ]}
+              />
+            </Grid.Col>
+          </Grid>
+
+          <Grid>
+            <Grid.Col span={4}>
+              <Title order={4}>Operations</Title>
+            </Grid.Col>
+            <Grid.Col span={8}>
+              <ControlButtons<Activity>
+                currentValue={activeStatus}
+                setCurrentValue={setActiveStatus}
+                values={[
+                  {
+                    value: Activity.Idle,
+                    color: theme.colors.gray[5],
+                    icon: IconCaretUpDown,
+                    label: 'Idle',
+                  },
+                  {
+                    value: Activity.Accelerating,
+                    color: theme.colors.green[5],
+                    icon: IconCaretUp,
+                    label: 'Accelerate',
+                    disabled: speed === maxSpeed,
+                  },
+                  {
+                    value: Activity.Decelerating,
+                    color: theme.colors.red[5],
+                    icon: IconCaretDown,
+                    label: 'Decelerate',
+                    disabled: speed === minSpeed,
                   },
                 ]}
               />
