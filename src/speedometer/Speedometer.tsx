@@ -5,11 +5,14 @@ import {
   Grid,
   Group,
   MantineTheme,
+  SegmentedControl,
   Stack,
   Text,
   Title,
+  rem,
   useMantineTheme,
 } from '@mantine/core';
+import { IconCar, IconPlane, IconRocket, IconSailboat2 } from '@tabler/icons-react';
 import { FC, useState } from 'react';
 
 import NumberSlider from '@/common/NumberSlider';
@@ -18,22 +21,25 @@ import styles from './Speedometer.module.css';
 
 interface SpeedometerProps {}
 
-const slowThreshold = 15;
-const fastThreshold = 10;
+const minSpeedLimit = 25;
+const maxSpeedLimit = 65;
+
+const slowDeltaThreshold = 15;
+const fastDeltaThreshold = 10;
 
 enum SpeedCategory {
-  SLOW,
-  BELOW,
-  OVER,
-  TOO_FAST,
+  SLOW = 'slow',
+  BELOW = 'below',
+  OVER = 'over',
+  TOO_FAST = 'too_fast',
 }
 
 const getSpeedCategory = (speed: number, speedLimit: number): SpeedCategory => {
-  if (speed < speedLimit - slowThreshold) {
+  if (speed < speedLimit - slowDeltaThreshold) {
     return SpeedCategory.SLOW;
-  } else if (speed > speedLimit && speed <= speedLimit + fastThreshold) {
+  } else if (speed > speedLimit && speed <= speedLimit + fastDeltaThreshold) {
     return SpeedCategory.OVER;
-  } else if (speed > speedLimit + fastThreshold) {
+  } else if (speed > speedLimit + fastDeltaThreshold) {
     return SpeedCategory.TOO_FAST;
   } else {
     return SpeedCategory.BELOW;
@@ -81,7 +87,7 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
               h={200}
               w={140}
               style={{
-                borderRadius: theme.radius.sm,
+                borderRadius: theme.radius.md,
                 borderWidth: 4,
                 border: '4px solid black',
                 textAlign: 'center',
@@ -107,7 +113,7 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
               h={200}
               w={140}
               style={{
-                borderRadius: theme.radius.sm,
+                borderRadius: theme.radius.md,
                 borderWidth: 4,
                 backgroundColor: theme.colors.yellow[5],
                 border: '4px solid black',
@@ -177,8 +183,8 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
                 color="gray"
                 value={speedLimit}
                 setValue={setSpeedLimit}
-                min={25}
-                max={65}
+                min={minSpeedLimit}
+                max={maxSpeedLimit}
                 marks={[
                   { value: 25, label: 25 },
                   { value: 45, label: 45 },
@@ -197,12 +203,84 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
                 color="gray"
                 value={speed}
                 setValue={setSpeed}
-                min={15}
-                max={70}
+                min={minSpeedLimit - slowDeltaThreshold - 5}
+                max={maxSpeedLimit + fastDeltaThreshold + 20}
                 marks={[
                   { value: 25, label: 25 },
                   { value: 45, label: 45 },
                   { value: 65, label: 65 },
+                ]}
+              />
+            </Grid.Col>
+          </Grid>
+
+          <Grid>
+            <Grid.Col span={4}>
+              <Title order={4}>Shift</Title>
+            </Grid.Col>
+            <Grid.Col span={8}>
+              <SegmentedControl
+                value={speedCategory}
+                onChange={(value) => {
+                  if (value === SpeedCategory.SLOW) {
+                    setSpeed(speedLimit - slowDeltaThreshold - 5);
+                  } else if (value === SpeedCategory.BELOW) {
+                    setSpeed(speedLimit);
+                  } else if (value === SpeedCategory.OVER) {
+                    setSpeed(speedLimit + fastDeltaThreshold);
+                  } else {
+                    setSpeed(speedLimit + fastDeltaThreshold + 5);
+                  }
+                }}
+                data={[
+                  {
+                    value: SpeedCategory.SLOW,
+                    label: (
+                      <Center style={{ gap: 5 }}>
+                        <IconSailboat2
+                          color={theme.colors.blue[5]}
+                          style={{ width: rem(16), height: rem(16) }}
+                        />
+                        <span>Slowest</span>
+                      </Center>
+                    ),
+                  },
+                  {
+                    value: SpeedCategory.BELOW,
+                    label: (
+                      <Center style={{ gap: 5 }}>
+                        <IconCar
+                          color={theme.colors.green[5]}
+                          style={{ width: rem(16), height: rem(16) }}
+                        />
+                        <span>Slow</span>
+                      </Center>
+                    ),
+                  },
+                  {
+                    value: SpeedCategory.OVER,
+                    label: (
+                      <Center style={{ gap: 5 }}>
+                        <IconPlane
+                          color={theme.colors.yellow[5]}
+                          style={{ width: rem(16), height: rem(16) }}
+                        />
+                        <span>Fast</span>
+                      </Center>
+                    ),
+                  },
+                  {
+                    value: SpeedCategory.TOO_FAST,
+                    label: (
+                      <Center style={{ gap: 5 }}>
+                        <IconRocket
+                          color={theme.colors.red[5]}
+                          style={{ width: rem(16), height: rem(16) }}
+                        />
+                        <span>Fastest</span>
+                      </Center>
+                    ),
+                  },
                 ]}
               />
             </Grid.Col>
