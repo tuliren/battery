@@ -18,8 +18,6 @@ import {
   IconPlane,
   IconRocket,
   IconSailboat2,
-  IconTrendingDown,
-  IconTrendingUp,
 } from '@tabler/icons-react';
 import { FC, useEffect, useState } from 'react';
 
@@ -31,7 +29,7 @@ import styles from './Speedometer.module.css';
 interface SpeedometerProps {}
 
 const minSpeedLimit = 25;
-const maxSpeedLimit = 65;
+const maxSpeedLimit = 70;
 
 const slowDeltaThreshold = 15;
 const fastDeltaThreshold = 10;
@@ -217,7 +215,7 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
         <Stack gap="xl">
           <Grid>
             <Grid.Col span={4}>
-              <Title order={4}>Speed Limit</Title>
+              <Title order={4}>Speed Limit: {speedLimit}</Title>
             </Grid.Col>
             <Grid.Col span={8}>
               <NumberSlider
@@ -237,7 +235,7 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
 
           <Grid>
             <Grid.Col span={4}>
-              <Title order={4}>Your Speed</Title>
+              <Title order={4}>Your Speed: {speed}</Title>
             </Grid.Col>
             <Grid.Col span={8}>
               <NumberSlider
