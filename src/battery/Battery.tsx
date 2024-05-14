@@ -5,14 +5,19 @@ import {
   Grid,
   Progress,
   SegmentedControl,
-  Space,
   Stack,
   Title,
   rem,
   useMantineTheme,
 } from '@mantine/core';
-import { IconBolt, IconPlug, IconPlugX } from '@tabler/icons-react';
-import { FC, useState } from 'react';
+import {
+  IconBattery2,
+  IconBatteryCharging2,
+  IconBolt,
+  IconPlug,
+  IconPlugX,
+} from '@tabler/icons-react';
+import { FC, useEffect, useState } from 'react';
 
 import NumberSlider from '@/common/NumberSlider';
 
@@ -20,24 +25,59 @@ const percentageMargin = 8;
 const lowBatteryThreshold = 20;
 const mediumBatteryThreshold = 50;
 
+enum Activity {
+  CHARGING = 'charging',
+  RELEASING = 'releasing',
+  IDLE = 'idle',
+}
+
 interface BatteryProps {}
 
 const Battery: FC<BatteryProps> = ({}) => {
-  const [chargingStatus, setChargingStatus] = useState<'on' | 'off'>('on');
+  const [chargingStatus, setChargingStatus] = useState<Activity.CHARGING | Activity.IDLE>(
+    Activity.IDLE
+  );
   const [percentage, setPercentage] = useState(85);
+  const [activeStatus, setActiveStatus] = useState<Activity>(Activity.IDLE);
   const theme = useMantineTheme();
   const lowBatteryColor = theme.colors.red[4];
   const mediumBatteryColor = theme.colors.orange[4];
   const highBatteryColor = theme.colors.green[5];
 
   const color =
-    chargingStatus === 'on'
+    chargingStatus === Activity.CHARGING
       ? highBatteryColor
       : percentage < lowBatteryThreshold
       ? lowBatteryColor
       : percentage < mediumBatteryThreshold
       ? mediumBatteryColor
       : highBatteryColor;
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (activeStatus === Activity.CHARGING) {
+      setChargingStatus(Activity.CHARGING);
+      if (percentage < 100) {
+        interval = setInterval(() => {
+          setPercentage((prev) => (prev + 1 > 100 ? 100 : prev + 1));
+        }, 50);
+      } else {
+        setChargingStatus(Activity.IDLE);
+        setActiveStatus(Activity.IDLE);
+      }
+    } else if (activeStatus === Activity.RELEASING) {
+      setChargingStatus(Activity.IDLE);
+      if (percentage > 0) {
+        interval = setInterval(() => {
+          setPercentage((prev) => (prev - 1 < 0 ? 0 : prev - 1));
+        }, 50);
+      } else {
+        setChargingStatus(Activity.IDLE);
+        setActiveStatus(Activity.IDLE);
+      }
+    }
+    return () => clearInterval(interval);
+  }, [activeStatus, percentage]);
 
   return (
     <Center>
@@ -78,7 +118,7 @@ const Battery: FC<BatteryProps> = ({}) => {
             />
           </Box>
 
-          {chargingStatus === 'on' && (
+          {chargingStatus === Activity.CHARGING && (
             <Box
               style={{
                 position: 'absolute',
@@ -96,14 +136,14 @@ const Battery: FC<BatteryProps> = ({}) => {
         <Stack gap="xl">
           <Grid>
             <Grid.Col span={4}>
-              <Title order={4}>Percentage</Title>
+              <Title order={4}>Percentage: {percentage}%</Title>
             </Grid.Col>
             <Grid.Col span={8}>
               <NumberSlider
                 color={color}
                 value={percentage}
                 setValue={setPercentage}
-                min={1}
+                min={0}
                 max={100}
                 marks={[
                   { value: 20, label: '20%' },
@@ -114,19 +154,17 @@ const Battery: FC<BatteryProps> = ({}) => {
             </Grid.Col>
           </Grid>
 
-          <Space />
-
           <Grid>
             <Grid.Col span={4}>
-              <Title order={4}>Charging</Title>
+              <Title order={4}>Charging Status</Title>
             </Grid.Col>
             <Grid.Col span={8}>
               <SegmentedControl
                 value={chargingStatus}
-                onChange={(value) => setChargingStatus(value as 'on' | 'off')}
+                onChange={(value) => setChargingStatus(value as Activity.CHARGING | Activity.IDLE)}
                 data={[
                   {
-                    value: 'on',
+                    value: Activity.CHARGING,
                     label: (
                       <Center style={{ gap: 5 }}>
                         <IconPlug color="green" style={{ width: rem(16), height: rem(16) }} />
@@ -135,11 +173,57 @@ const Battery: FC<BatteryProps> = ({}) => {
                     ),
                   },
                   {
-                    value: 'off',
+                    value: Activity.IDLE,
                     label: (
                       <Center style={{ gap: 5 }}>
                         <IconPlugX color="gray" style={{ width: rem(16), height: rem(16) }} />
                         <span>Off</span>
+                      </Center>
+                    ),
+                  },
+                ]}
+              />
+            </Grid.Col>
+          </Grid>
+
+          <Grid>
+            <Grid.Col span={4}>
+              <Title order={4}>Operation</Title>
+            </Grid.Col>
+            <Grid.Col span={8}>
+              <SegmentedControl
+                value={activeStatus}
+                onChange={(value) => setActiveStatus(value as Activity)}
+                data={[
+                  {
+                    value: Activity.IDLE,
+                    label: (
+                      <Center style={{ gap: 5 }}>
+                        <IconBattery2 color="blue" style={{ width: rem(16), height: rem(16) }} />
+                        <span>Idle</span>
+                      </Center>
+                    ),
+                  },
+                  {
+                    value: Activity.CHARGING,
+                    disabled: percentage === 100,
+                    label: (
+                      <Center style={{ gap: 5 }}>
+                        <IconBatteryCharging2
+                          color="green"
+                          style={{ width: rem(16), height: rem(16) }}
+                        />
+                        <span>Charge</span>
+                      </Center>
+                    ),
+                  },
+                  {
+                    value: Activity.RELEASING,
+                    disabled: percentage === 0,
+                    label: (
+                      <Center style={{ gap: 5 }}>
+                        <IconPlugX color="orange" style={{ width: rem(16), height: rem(16) }} />
+                        <span>Release</span>
                       </Center>
                     ),
                   },
