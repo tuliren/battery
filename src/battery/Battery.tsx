@@ -1,15 +1,4 @@
-import {
-  Box,
-  Card,
-  Center,
-  Grid,
-  Progress,
-  SegmentedControl,
-  Stack,
-  Title,
-  rem,
-  useMantineTheme,
-} from '@mantine/core';
+import { Box, Card, Center, Grid, Progress, Stack, Title, useMantineTheme } from '@mantine/core';
 import {
   IconBattery2,
   IconBatteryCharging2,
@@ -19,7 +8,11 @@ import {
 } from '@tabler/icons-react';
 import { FC, useEffect, useState } from 'react';
 
+import ControlButtons from '@/common/ControlButtons';
 import NumberSlider from '@/common/NumberSlider';
+
+const minPercentage = 0;
+const maxPercentage = 100;
 
 const percentageMargin = 8;
 const lowBatteryThreshold = 20;
@@ -57,9 +50,9 @@ const Battery: FC<BatteryProps> = ({}) => {
     let interval: NodeJS.Timeout;
     if (activeStatus === Activity.CHARGING) {
       setChargingStatus(Activity.CHARGING);
-      if (percentage < 100) {
+      if (percentage < maxPercentage) {
         interval = setInterval(() => {
-          setPercentage((prev) => (prev + 1 > 100 ? 100 : prev + 1));
+          setPercentage((prev) => (prev + 1 > maxPercentage ? maxPercentage : prev + 1));
         }, 50);
       } else {
         setChargingStatus(Activity.IDLE);
@@ -67,9 +60,9 @@ const Battery: FC<BatteryProps> = ({}) => {
       }
     } else if (activeStatus === Activity.RELEASING) {
       setChargingStatus(Activity.IDLE);
-      if (percentage > 0) {
+      if (percentage > minPercentage) {
         interval = setInterval(() => {
-          setPercentage((prev) => (prev - 1 < 0 ? 0 : prev - 1));
+          setPercentage((prev) => (prev - 1 < minPercentage ? minPercentage : prev - 1));
         }, 50);
       } else {
         setChargingStatus(Activity.IDLE);
@@ -159,28 +152,12 @@ const Battery: FC<BatteryProps> = ({}) => {
               <Title order={4}>Charging Status</Title>
             </Grid.Col>
             <Grid.Col span={8}>
-              <SegmentedControl
-                value={chargingStatus}
-                onChange={(value) => setChargingStatus(value as Activity.CHARGING | Activity.IDLE)}
-                data={[
-                  {
-                    value: Activity.CHARGING,
-                    label: (
-                      <Center style={{ gap: 5 }}>
-                        <IconPlug color="green" style={{ width: rem(16), height: rem(16) }} />
-                        <span>On</span>
-                      </Center>
-                    ),
-                  },
-                  {
-                    value: Activity.IDLE,
-                    label: (
-                      <Center style={{ gap: 5 }}>
-                        <IconPlugX color="gray" style={{ width: rem(16), height: rem(16) }} />
-                        <span>Off</span>
-                      </Center>
-                    ),
-                  },
+              <ControlButtons<Activity.IDLE | Activity.CHARGING>
+                currentValue={chargingStatus}
+                setCurrentValue={setChargingStatus}
+                values={[
+                  { value: Activity.CHARGING, color: 'green', icon: IconPlug, label: 'On' },
+                  { value: Activity.IDLE, color: 'gray', icon: IconPlugX, label: 'Off' },
                 ]}
               />
             </Grid.Col>
@@ -191,41 +168,24 @@ const Battery: FC<BatteryProps> = ({}) => {
               <Title order={4}>Operation</Title>
             </Grid.Col>
             <Grid.Col span={8}>
-              <SegmentedControl
-                value={activeStatus}
-                onChange={(value) => setActiveStatus(value as Activity)}
-                data={[
-                  {
-                    value: Activity.IDLE,
-                    label: (
-                      <Center style={{ gap: 5 }}>
-                        <IconBattery2 color="blue" style={{ width: rem(16), height: rem(16) }} />
-                        <span>Idle</span>
-                      </Center>
-                    ),
-                  },
+              <ControlButtons<Activity>
+                currentValue={activeStatus}
+                setCurrentValue={setActiveStatus}
+                values={[
+                  { value: Activity.IDLE, color: 'blue', icon: IconBattery2, label: 'Idle' },
                   {
                     value: Activity.CHARGING,
-                    disabled: percentage === 100,
-                    label: (
-                      <Center style={{ gap: 5 }}>
-                        <IconBatteryCharging2
-                          color="green"
-                          style={{ width: rem(16), height: rem(16) }}
-                        />
-                        <span>Charge</span>
-                      </Center>
-                    ),
+                    color: 'green',
+                    icon: IconBatteryCharging2,
+                    label: 'Charge',
+                    disabled: percentage === maxPercentage,
                   },
                   {
                     value: Activity.RELEASING,
-                    disabled: percentage === 0,
-                    label: (
-                      <Center style={{ gap: 5 }}>
-                        <IconPlugX color="orange" style={{ width: rem(16), height: rem(16) }} />
-                        <span>Release</span>
-                      </Center>
-                    ),
+                    color: 'orange',
+                    icon: IconPlugX,
+                    label: 'Release',
+                    disabled: percentage === minPercentage,
                   },
                 ]}
               />

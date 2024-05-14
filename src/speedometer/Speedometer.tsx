@@ -5,16 +5,15 @@ import {
   Grid,
   Group,
   MantineTheme,
-  SegmentedControl,
   Stack,
   Text,
   Title,
-  rem,
   useMantineTheme,
 } from '@mantine/core';
 import { IconCar, IconPlane, IconRocket, IconSailboat2 } from '@tabler/icons-react';
 import { FC, useState } from 'react';
 
+import ControlButtons from '@/common/ControlButtons';
 import NumberSlider from '@/common/NumberSlider';
 
 import styles from './Speedometer.module.css';
@@ -219,9 +218,9 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
               <Title order={4}>Shift</Title>
             </Grid.Col>
             <Grid.Col span={8}>
-              <SegmentedControl
-                value={speedCategory}
-                onChange={(value) => {
+              <ControlButtons<SpeedCategory>
+                currentValue={speedCategory}
+                setCurrentValue={(value) => {
                   if (value === SpeedCategory.SLOW) {
                     setSpeed(speedLimit - slowDeltaThreshold - 5);
                   } else if (value === SpeedCategory.BELOW) {
@@ -232,54 +231,30 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
                     setSpeed(speedLimit + fastDeltaThreshold + 5);
                   }
                 }}
-                data={[
+                values={[
                   {
                     value: SpeedCategory.SLOW,
-                    label: (
-                      <Center style={{ gap: 5 }}>
-                        <IconSailboat2
-                          color={theme.colors.blue[5]}
-                          style={{ width: rem(16), height: rem(16) }}
-                        />
-                        <span>Slowest</span>
-                      </Center>
-                    ),
+                    color: theme.black,
+                    icon: IconSailboat2,
+                    label: 'Slowest',
                   },
                   {
                     value: SpeedCategory.BELOW,
-                    label: (
-                      <Center style={{ gap: 5 }}>
-                        <IconCar
-                          color={theme.colors.green[5]}
-                          style={{ width: rem(16), height: rem(16) }}
-                        />
-                        <span>Slow</span>
-                      </Center>
-                    ),
+                    color: theme.colors.yellow[5],
+                    icon: IconCar,
+                    label: 'Slow',
                   },
                   {
                     value: SpeedCategory.OVER,
-                    label: (
-                      <Center style={{ gap: 5 }}>
-                        <IconPlane
-                          color={theme.colors.yellow[5]}
-                          style={{ width: rem(16), height: rem(16) }}
-                        />
-                        <span>Fast</span>
-                      </Center>
-                    ),
+                    color: theme.colors.yellow[5],
+                    icon: IconPlane,
+                    label: 'Fast',
                   },
                   {
                     value: SpeedCategory.TOO_FAST,
-                    label: (
-                      <Center style={{ gap: 5 }}>
-                        <IconRocket
-                          color={theme.colors.red[5]}
-                          style={{ width: rem(16), height: rem(16) }}
-                        />
-                        <span>Fastest</span>
-                      </Center>
-                    ),
+                    color: theme.colors.red[5],
+                    icon: IconRocket,
+                    label: 'Fastest',
                   },
                 ]}
               />
