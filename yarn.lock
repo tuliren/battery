@@ -3174,23 +3174,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-mantine@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "eslint-config-mantine@npm:3.1.0"
-  peerDependencies:
-    "@typescript-eslint/eslint-plugin": ^6.8.0
-    "@typescript-eslint/parser": ^6.8.0
-    eslint: ^8.51.0
-    eslint-config-airbnb: 19.0.4
-    eslint-config-airbnb-typescript: ^17.1.0
-    eslint-plugin-import: ^2.28.1
-    eslint-plugin-jsx-a11y: ^6.7.1
-    eslint-plugin-react: ^7.33.2
-    eslint-plugin-react-hooks: ^4.6.0
-  checksum: 6e4372638bfa233c05c296cb0d758db4aa76800f0c4901586cd62b7214cb5c4f81364c1a5a2dbd2a5fe13fc4c44a1657db0cec7a04fe78aef429afaa847c26b8
-  languageName: node
-  linkType: hard
-
 "eslint-config-next@npm:^14.0.4":
   version: 14.1.0
   resolution: "eslint-config-next@npm:14.1.0"
@@ -5724,7 +5707,6 @@ __metadata:
     eslint-config-airbnb: "npm:19.0.4"
     eslint-config-airbnb-typescript: "npm:^17.0.0"
     eslint-config-import: "npm:^0.13.0"
-    eslint-config-mantine: "npm:^3.1.0"
     eslint-config-next: "npm:^14.0.4"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-import-resolver-typescript: "npm:^3.6.1"
