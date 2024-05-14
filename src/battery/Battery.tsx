@@ -7,7 +7,6 @@ import {
   SegmentedControl,
   Space,
   Stack,
-  Table,
   Title,
   rem,
   useMantineTheme,
@@ -15,7 +14,7 @@ import {
 import { IconBolt, IconPlug, IconPlugX } from '@tabler/icons-react';
 import { FC, useState } from 'react';
 
-import PercentageSlider from '@/battery/PercentageSlider';
+import NumberSlider from '@/common/NumberSlider';
 
 const percentageMargin = 8;
 const lowBatteryThreshold = 20;
@@ -100,10 +99,17 @@ const Battery: FC<BatteryProps> = ({}) => {
               <Title order={4}>Percentage</Title>
             </Grid.Col>
             <Grid.Col span={8}>
-              <PercentageSlider
+              <NumberSlider
                 color={color}
-                percentage={percentage}
-                setPercentage={setPercentage}
+                value={percentage}
+                setValue={setPercentage}
+                min={1}
+                max={100}
+                marks={[
+                  { value: 20, label: '20%' },
+                  { value: 50, label: '50%' },
+                  { value: 80, label: '80%' },
+                ]}
               />
             </Grid.Col>
           </Grid>

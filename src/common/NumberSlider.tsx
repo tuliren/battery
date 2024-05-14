@@ -1,27 +1,29 @@
 import { Slider, rem, useMantineTheme } from '@mantine/core';
 import { IconGripHorizontal } from '@tabler/icons-react';
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 
-interface PercentageSliderProps {
+interface NumberSliderProps {
   color: string;
-  percentage: number;
-  setPercentage: (percentage: number) => void;
+  value: number;
+  setValue: (percentage: number) => void;
+  min: number;
+  max: number;
+  marks?: Array<{
+    value: number;
+    label?: ReactNode;
+  }>;
 }
 
-const PercentageSlider: FC<PercentageSliderProps> = ({ color, percentage, setPercentage }) => {
+const NumberSlider: FC<NumberSliderProps> = ({ color, value, setValue, min, max, marks }) => {
   const theme = useMantineTheme();
   return (
     <Slider
-      min={1}
-      max={100}
+      min={min}
+      max={max}
       color={color}
-      value={percentage}
-      onChange={setPercentage}
-      marks={[
-        { value: 20, label: '20%' },
-        { value: 50, label: '50%' },
-        { value: 80, label: '80%' },
-      ]}
+      value={value}
+      onChange={setValue}
+      marks={marks}
       thumbChildren={
         <IconGripHorizontal style={{ width: rem(20), height: rem(20) }} stroke={1.5} />
       }
@@ -41,4 +43,4 @@ const PercentageSlider: FC<PercentageSliderProps> = ({ color, percentage, setPer
   );
 };
 
-export default PercentageSlider;
+export default NumberSlider;
