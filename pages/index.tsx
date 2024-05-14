@@ -4,6 +4,7 @@ import type { NextPage } from 'next';
 
 import Battery from '@/battery/Battery';
 import Speedometer from '@/speedometer/Speedometer';
+import styles from '@/speedometer/Speedometer.module.css';
 
 const iconStyle = { width: rem(30), height: rem(30) };
 const iconStroke = 1.8;

@@ -14,6 +14,8 @@ import { FC, useState } from 'react';
 
 import NumberSlider from '@/common/NumberSlider';
 
+import styles from './Speedometer.module.css';
+
 interface SpeedometerProps {}
 
 const slowThreshold = 15;
@@ -138,14 +140,20 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
                   <Text
                     c={displayColor}
                     fw={800}
-                    style={{ fontSize: 'calc(1.1em + 2vw)', lineHeight: 0.8 }}
+                    style={{
+                      fontSize: 'calc(2em)',
+                      lineHeight: 1,
+                    }}
+                    className={speedCategory === SpeedCategory.TOO_FAST ? styles.flash : ''}
                   >
-                    SLOW DOWN
+                    SLOW
+                    <br />
+                    DOWN
                   </Text>
                 ) : speedCategory === SpeedCategory.SLOW ? (
                   <></>
                 ) : (
-                  <Text c={displayColor} fw={800} style={{ fontSize: 'calc(3em + 3vw)' }}>
+                  <Text c={displayColor} fw={800} style={{ fontSize: 'calc(4.6em)' }}>
                     {speed}
                   </Text>
                 )}
