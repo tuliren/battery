@@ -13,12 +13,12 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>⚡Battery⚡</title>
-        <meta name="description" content="A battery" />
+        <meta name="description" content="Interactive toys for Charles" />
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
         <link rel="icon" href="/battery.svg" />
       </Head>
 
-      <PlausibleProvider domain="battery.plux.dev" enabled={enableAnalytics}>
+      <PlausibleProvider domain="battery.liren.dev" enabled={enableAnalytics}>
         <MantineProvider>
           <Container size="xl">
             <Component {...pageProps} />
