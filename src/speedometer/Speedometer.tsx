@@ -115,7 +115,7 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '55vh',
+            height: '50vh',
           }}
         >
           <Group gap="lg">
@@ -213,7 +213,7 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
         </Card.Section>
 
         <Stack gap="xl">
-          <Grid>
+          <Grid gutter="xl" justify="space-between" align="stretch">
             <Grid.Col span={4}>
               <Title order={4}>Speed Limit: {speedLimit}</Title>
             </Grid.Col>
@@ -231,9 +231,7 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
                 ]}
               />
             </Grid.Col>
-          </Grid>
 
-          <Grid>
             <Grid.Col span={4}>
               <Title order={4}>Your Speed: {speed}</Title>
             </Grid.Col>
@@ -251,11 +249,9 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
                 ]}
               />
             </Grid.Col>
-          </Grid>
 
-          <Grid>
             <Grid.Col span={4}>
-              <Title order={4}>Shift</Title>
+              <Title order={4}>Speed Category</Title>
             </Grid.Col>
             <Grid.Col span={8}>
               <ControlButtons<SpeedCategory>
@@ -299,11 +295,9 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
                 ]}
               />
             </Grid.Col>
-          </Grid>
 
-          <Grid>
             <Grid.Col span={4}>
-              <Title order={4}>Operations</Title>
+              <Title order={4}>Actions</Title>
             </Grid.Col>
             <Grid.Col span={8}>
               <ControlButtons<Activity>

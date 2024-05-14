@@ -81,7 +81,7 @@ const Battery: FC<BatteryProps> = ({}) => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '55vh',
+            height: '50vh',
           }}
         >
           <Box
@@ -127,7 +127,7 @@ const Battery: FC<BatteryProps> = ({}) => {
         </Card.Section>
 
         <Stack gap="xl">
-          <Grid>
+          <Grid gutter="xl" justify="space-between" align="stretch">
             <Grid.Col span={4}>
               <Title order={4}>Percentage: {percentage}%</Title>
             </Grid.Col>
@@ -145,9 +145,7 @@ const Battery: FC<BatteryProps> = ({}) => {
                 ]}
               />
             </Grid.Col>
-          </Grid>
 
-          <Grid>
             <Grid.Col span={4}>
               <Title order={4}>Charging Status</Title>
             </Grid.Col>
@@ -161,11 +159,9 @@ const Battery: FC<BatteryProps> = ({}) => {
                 ]}
               />
             </Grid.Col>
-          </Grid>
 
-          <Grid>
             <Grid.Col span={4}>
-              <Title order={4}>Operation</Title>
+              <Title order={4}>Actions</Title>
             </Grid.Col>
             <Grid.Col span={8}>
               <ControlButtons<Activity>
