@@ -3,6 +3,7 @@ import { IconBatteryCharging2, IconWind } from '@tabler/icons-react';
 import type { NextPage } from 'next';
 
 import Battery from '@/battery/Battery';
+import Speedometer from '@/speedometer/Speedometer';
 
 const iconStyle = { width: rem(30), height: rem(30) };
 const iconStroke = 1.8;
@@ -34,6 +35,10 @@ const Home: NextPage = () => {
 
         <Tabs.Panel value="battery">
           <Battery />
+        </Tabs.Panel>
+
+        <Tabs.Panel value="speedometer">
+          <Speedometer />
         </Tabs.Panel>
       </Tabs>
     </Container>
