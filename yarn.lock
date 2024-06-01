@@ -935,12 +935,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mantine/hooks@npm:^7.9.1":
-  version: 7.9.1
-  resolution: "@mantine/hooks@npm:7.9.1"
+"@mantine/hooks@npm:^7.10.1":
+  version: 7.10.1
+  resolution: "@mantine/hooks@npm:7.10.1"
   peerDependencies:
     react: ^18.2.0
-  checksum: 048614a18836163000eee23a5993be6ece236ec42ca644eeea3890137de62b9b4a50270abfd55619388fe92f191bece3fb549c13edc73bb43388eb84c0b6db1f
+  checksum: 1b165c56416087a8e24de40633cf64bf356b62c74a8dd99b63b3436f14ecf587274410965f3d670dba61d81e649dd9e602d8c4b74b6e8780f96b26023ec409b9
   languageName: node
   linkType: hard
 
@@ -5702,7 +5702,7 @@ __metadata:
   dependencies:
     "@babel/core": "npm:^7.20.12"
     "@mantine/core": "npm:^7.10.1"
-    "@mantine/hooks": "npm:^7.9.1"
+    "@mantine/hooks": "npm:^7.10.1"
     "@next/eslint-plugin-next": "npm:^14.2.3"
     "@tabler/icons-react": "npm:^2.47.0"
     "@trivago/prettier-plugin-sort-imports": "npm:^4.3.0"
