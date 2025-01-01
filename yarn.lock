@@ -5957,14 +5957,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next-plausible@npm:^3.12.0":
-  version: 3.12.0
-  resolution: "next-plausible@npm:3.12.0"
+"next-plausible@npm:^3.12.4":
+  version: 3.12.4
+  resolution: "next-plausible@npm:3.12.4"
   peerDependencies:
-    next: ^11.1.0 || ^12.0.0 || ^13.0.0 || ^14.0.0
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 0894d81e7decb2dda6f9aee66b663ed4264533d2b21b86ffcecbb5ac471b56064506c4d34d07a4f59b26a75df53c6b9ec7f39554f1da920c9e013d4d9f6178e3
+    next: "^11.1.0 || ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 "
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 70f1efd90ed5dc63089cd916e630883a62a03ec3319fde0b3a2a2303704a5e60b1843cf9f821e1b918514e3a9d5b0594eb8af6925a01132cb8705219db3bc99a
   languageName: node
   linkType: hard
 
@@ -6057,7 +6057,7 @@ __metadata:
     jest-html-reporter: "npm:^3.10.2"
     lint-staged: "npm:^15.2.7"
     next: "npm:^14.2.10"
-    next-plausible: "npm:^3.12.0"
+    next-plausible: "npm:^3.12.4"
     postcss: "npm:^8.4.49"
     postcss-preset-mantine: "npm:^1.17.0"
     postcss-simple-vars: "npm:^7.0.1"
