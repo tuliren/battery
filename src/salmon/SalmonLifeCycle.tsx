@@ -152,13 +152,6 @@ const SalmonLifeCycle: FC = () => {
 
   const activeStage = started ? activeStageAt(progress) : null;
 
-  useEffect(() => {
-    if (activeStage === null) {
-      return;
-    }
-    setActivations((prev) => prev.map((count, i) => (i === activeStage ? count + 1 : count)));
-  }, [activeStage]);
-
   useEffect(
     () => () => {
       if (frameRef.current !== null) {
@@ -168,10 +161,18 @@ const SalmonLifeCycle: FC = () => {
     []
   );
 
+  const lastStageRef = useRef<number | null>(null);
+
   const updateProgress = useCallback((value: number) => {
     progressRef.current = value;
     setProgress(value);
     setStarted(true);
+    // Count each arrival so the stage's animation restarts from the beginning.
+    const stage = activeStageAt(value);
+    if (stage !== lastStageRef.current) {
+      lastStageRef.current = stage;
+      setActivations((prev) => prev.map((count, i) => (i === stage ? count + 1 : count)));
+    }
   }, []);
 
   const runAnimation = useCallback(() => {

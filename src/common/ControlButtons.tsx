@@ -1,5 +1,4 @@
-import { Center, SegmentedControl, rem } from '@mantine/core';
-import type { SegmentedControlItem } from '@mantine/core/lib/components/SegmentedControl';
+import { Center, SegmentedControl, SegmentedControlItem, rem } from '@mantine/core';
 import { Icon } from '@tabler/icons-react';
 
 interface ControlButtonsProps<T extends string> {
