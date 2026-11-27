@@ -1,9 +1,70 @@
+/* Page and card follow the Minicharts house style: a paper card on a desk, a title bar,
+   and a red hand-written note under a dashed line. */
+
+.desk {
+  background: #e3dac8;
+  border-radius: 6px;
+  padding: 20px;
+  font-family: var(--font-gaegu), 'DM Sans', sans-serif;
+  color: #2f261e;
+}
+
+.card {
+  background: #fbf6ec;
+  border: 1px solid #2f261e;
+  border-radius: 3px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.cap {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #2f261e;
+}
+
+.cap h3 {
+  margin: 0;
+  font: 400 28px/1.1 var(--font-young-serif), Georgia, serif;
+}
+
+.cap span {
+  font-size: 20px;
+  color: #6f6150;
+}
+
+.note {
+  margin: 0;
+  padding: 10px 16px 14px;
+  border-top: 1px dashed #cdbfa8;
+  color: #b23a38;
+  font-size: 21px;
+  line-height: 1.25;
+  min-height: calc(3.75em + 24px);
+}
+
 .board {
   width: 100%;
   height: auto;
   display: block;
   user-select: none;
   -webkit-user-select: none;
+}
+
+.board text {
+  font-family: var(--font-gaegu), 'DM Sans', sans-serif;
+}
+
+.serif {
+  font-family: var(--font-young-serif), Georgia, serif !important;
+}
+
+.smallCaps {
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
 }
 
 .knob {
@@ -17,28 +78,31 @@
 }
 
 .knob:focus-visible .knobFocus {
-  stroke: #1f6fb3;
-  stroke-width: 6;
+  stroke: #c66756;
+  stroke-width: 4;
+}
+
+.medallion {
+  transition: opacity 0.6s ease;
 }
 
 .shutter {
   transform-box: fill-box;
   transform-origin: 50% 0%;
-  transition: transform 0.9s ease-in-out;
+  transition: transform 1.2s ease-in-out;
 }
 
 .shutterOpen {
   transform: rotate(180deg);
 }
 
-.glow {
+.ring {
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.5s ease;
 }
 
-.glowOn {
+.ringOn {
   opacity: 1;
-  animation: pulse 1.6s ease-in-out infinite;
 }
 
 .paused,
@@ -46,60 +110,55 @@
   animation-play-state: paused !important;
 }
 
-.caption {
-  transition: opacity 0.4s ease;
+.label {
+  transition: opacity 0.5s ease;
 }
 
-/* ---------- shared motions ---------- */
-
-.spin {
-  transform-box: fill-box;
-  transform-origin: center;
-}
+/* ---------- shared motions: slow and calm ---------- */
 
 .swimAcross {
-  animation: swimAcross 6s linear infinite both;
+  animation: swimAcross 9s linear infinite both;
 }
 
 .swimAcrossSlow {
-  animation: swimAcross 11s linear infinite both;
+  animation: swimAcross 14s linear infinite both;
 }
 
 .silverToRed {
-  animation: silverToRed 6s linear infinite both;
+  animation: silverToRed 9s linear infinite both;
 }
 
 .grayToPink {
-  animation: grayToPink 11s linear infinite both;
+  animation: grayToPink 14s linear infinite both;
 }
 
 .bubble {
-  animation: bubble 3.5s ease-in infinite both;
+  animation: bubble 5s ease-in infinite both;
 }
 
 .sway {
   transform-box: fill-box;
   transform-origin: 50% 100%;
-  animation: sway 3s ease-in-out infinite alternate both;
+  animation: sway 4.5s ease-in-out infinite alternate both;
 }
 
 .wiggle {
   transform-box: fill-box;
   transform-origin: center;
-  animation: wiggle 0.35s ease-in-out infinite alternate both;
+  animation: wiggle 0.7s ease-in-out infinite alternate both;
 }
 
 .bob {
-  animation: bob 2.4s ease-in-out infinite alternate both;
+  animation: bob 3.2s ease-in-out infinite alternate both;
 }
 
 .flow {
   stroke-dasharray: 18 14;
-  animation: flow 0.8s linear infinite;
+  animation: flow 1.4s linear infinite;
 }
 
 .shimmer {
-  animation: shimmer 4s ease-in-out infinite alternate both;
+  animation: shimmer 5s ease-in-out infinite alternate both;
 }
 
 /* ---------- stage 2: upstream ---------- */
@@ -107,13 +166,17 @@
 .leap {
   transform-box: fill-box;
   transform-origin: center;
-  animation: leap 2.6s ease-in-out infinite both;
+  animation: leap 3.6s ease-in-out infinite both;
 }
 
-.chomp {
+.bearBob {
+  animation: bob 3.6s ease-in-out infinite alternate both;
+}
+
+.wave {
   transform-box: fill-box;
-  transform-origin: 80% 70%;
-  animation: chomp 1.3s ease-in-out infinite both;
+  transform-origin: 70% 90%;
+  animation: wave 1.8s ease-in-out infinite alternate both;
 }
 
 /* ---------- stage 3: spawning ---------- */
@@ -121,21 +184,21 @@
 .popIn {
   transform-box: fill-box;
   transform-origin: center;
-  animation: popIn 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+  animation: popIn 0.7s cubic-bezier(0.3, 1.5, 0.5, 1) both;
 }
 
 .parentFade {
-  animation: parentFade 2s ease-in 4s both;
+  animation: parentFade 2.6s ease-in 4.6s both;
 }
 
 .grow {
   transform-box: fill-box;
   transform-origin: 50% 100%;
-  animation: grow 1.4s ease-out both;
+  animation: grow 1.8s ease-out both;
 }
 
 .sparkleRise {
-  animation: sparkleRise 2.2s ease-out infinite both;
+  animation: sparkleRise 3s ease-out infinite both;
 }
 
 /* ---------- stage 4: hatching ---------- */
@@ -143,47 +206,37 @@
 .eggHatch {
   transform-box: fill-box;
   transform-origin: center;
-  animation: eggHatch 2.4s ease-in-out both;
+  animation: eggHatch 2.8s ease-in-out both;
 }
 
 .alevinAppear {
-  animation: appear 0.4s ease-out 2s both;
+  animation: appear 0.6s ease-out 2.4s both;
 }
 
 .riseUp {
-  animation: riseUp 2.5s ease-in-out 4.2s both;
+  animation: riseUp 3s ease-in-out 4.8s both;
 }
 
 .yolkShrink {
   transform-box: fill-box;
   transform-origin: center;
-  animation: yolkShrink 2s ease-in 4s both;
+  animation: yolkShrink 2.4s ease-in 4.6s both;
 }
 
 /* ---------- stage 5: heading to sea ---------- */
 
 .dart {
-  animation: dart 7s ease-in-out infinite both;
+  animation: dart 9s ease-in-out infinite both;
 }
 
 .predator {
-  animation: predator 7s linear infinite both;
+  animation: predator 9s linear infinite both;
 }
 
 /* ---------- stage 6: ocean ---------- */
 
 .drift {
-  animation: drift 6s linear infinite both;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    stroke-opacity: 1;
-  }
-  50% {
-    stroke-opacity: 0.35;
-  }
+  animation: drift 8s ease-in-out infinite both;
 }
 
 @keyframes swimAcross {
@@ -198,22 +251,22 @@
 @keyframes silverToRed {
   0%,
   25% {
-    fill: #c9d4dd;
+    fill: #dfe6ea;
   }
   75%,
   100% {
-    fill: #d8323c;
+    fill: #d47867;
   }
 }
 
 @keyframes grayToPink {
   0%,
   20% {
-    fill: #b8c4cc;
+    fill: #dfe6ea;
   }
   70%,
   100% {
-    fill: #f08aa0;
+    fill: #e8a0a8;
   }
 }
 
@@ -230,6 +283,15 @@
 
 @keyframes sway {
   from {
+    transform: rotate(-4deg);
+  }
+  to {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes wiggle {
+  from {
     transform: rotate(-6deg);
   }
   to {
@@ -237,21 +299,12 @@
   }
 }
 
-@keyframes wiggle {
-  from {
-    transform: rotate(-8deg);
-  }
-  to {
-    transform: rotate(8deg);
-  }
-}
-
 @keyframes bob {
   from {
-    transform: translateY(-4px);
+    transform: translateY(-3px);
   }
   to {
-    transform: translateY(4px);
+    transform: translateY(3px);
   }
 }
 
@@ -263,10 +316,10 @@
 
 @keyframes shimmer {
   from {
-    opacity: 0.15;
+    opacity: 0.12;
   }
   to {
-    opacity: 0.45;
+    opacity: 0.35;
   }
 }
 
@@ -285,17 +338,12 @@
   }
 }
 
-@keyframes chomp {
-  0%,
-  40%,
-  100% {
-    transform: rotate(0deg);
+@keyframes wave {
+  from {
+    transform: rotate(8deg);
   }
-  55% {
-    transform: rotate(-14deg);
-  }
-  70% {
-    transform: rotate(4deg);
+  to {
+    transform: rotate(-18deg);
   }
 }
 
@@ -314,8 +362,8 @@
     transform: translateY(0);
   }
   to {
-    opacity: 0.15;
-    transform: translateY(14px);
+    opacity: 0.35;
+    transform: translateY(12px);
   }
 }
 
@@ -348,20 +396,20 @@
     opacity: 1;
   }
   15% {
-    transform: rotate(-12deg);
+    transform: rotate(-10deg);
   }
   30% {
-    transform: rotate(12deg);
+    transform: rotate(10deg);
   }
   45% {
-    transform: rotate(-12deg);
+    transform: rotate(-10deg);
   }
   60% {
-    transform: rotate(12deg) scale(1);
+    transform: rotate(10deg) scale(1);
     opacity: 1;
   }
   100% {
-    transform: rotate(0) scale(1.4);
+    transform: rotate(0) scale(1.3);
     opacity: 0;
   }
 }
@@ -409,11 +457,11 @@
   }
   60% {
     transform: translate(-45px, 25px);
-    opacity: 0.35;
+    opacity: 0.4;
   }
   80% {
     transform: translate(-45px, 25px);
-    opacity: 0.35;
+    opacity: 0.4;
   }
   100% {
     transform: translate(-60px, 0);
@@ -433,14 +481,14 @@
 }
 
 @keyframes drift {
-  from {
-    transform: translate(20px, -10px);
+  0% {
+    transform: translate(16px, -8px);
   }
   50% {
-    transform: translate(-10px, 8px);
+    transform: translate(-8px, 6px);
   }
-  to {
-    transform: translate(20px, -10px);
+  100% {
+    transform: translate(16px, -8px);
   }
 }
 

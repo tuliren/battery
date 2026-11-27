@@ -1,16 +1,28 @@
-import { Card, Center, Text } from '@mantine/core';
+import { Gaegu, Young_Serif } from 'next/font/google';
 import { FC, KeyboardEvent, PointerEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 import styles from './SalmonLifeCycle.module.css';
+import { INK, LN, PAL, RED, SHADOW, toneOf } from './palette';
 import { SCENE_RADIUS, STAGES } from './stages';
 import { COLUMN_X, STAGE_COUNT, TRACK, TRACK_PATH, activeStageAt, pointAtProgress } from './track';
 
+const gaegu = Gaegu({ weight: ['400', '700'], subsets: ['latin'], variable: '--font-gaegu' });
+const youngSerif = Young_Serif({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-young-serif',
+});
+
 const WIDTH = 1400;
-const HEIGHT = 980;
+const HEIGHT = 975;
 const TOP_Y = 280;
 const BOTTOM_Y = 720;
-const KNOB = { x: 1290, y: 500, r: 75 };
+const KNOB = { x: 1290, y: 500, r: 72 };
 const WINDOW_RADIUS = SCENE_RADIUS - 12;
+
+// Board-level ink, in sheet units (the sheet is drawn at roughly 0.75 px per unit).
+const OUTLINE = 2.4;
+const DETAIL = 1.3;
 
 // Start between the last and first stage, on the left end of the track.
 const START_PROGRESS = -0.4;
@@ -35,15 +47,16 @@ const normalizeDegrees = (degrees: number): number => {
 const clamp = (value: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, value));
 
-interface StageCircleProps {
+interface StageProps {
   index: number;
   active: boolean;
+  dimmed: boolean;
   activation: number;
 }
 
-const StageCircle: FC<StageCircleProps> = ({ index, active, activation }) => {
+const StageCircle: FC<StageProps> = ({ index, active, dimmed, activation }) => {
   const { x, y } = STAGE_POSITIONS[index];
-  const { Scene } = STAGES[index];
+  const { Scene, tint } = STAGES[index];
   const clipId = `salmon-circle-${index}`;
   const windowClipId = `salmon-window-${index}`;
   const windowPath = `M ${-WINDOW_RADIUS} 0 A ${WINDOW_RADIUS} ${WINDOW_RADIUS} 0 0 0 ${WINDOW_RADIUS} 0 Z`;
@@ -59,64 +72,69 @@ const StageCircle: FC<StageCircleProps> = ({ index, active, activation }) => {
         </clipPath>
       </defs>
 
-      <circle
-        r={SCENE_RADIUS + 14}
-        fill="none"
-        stroke="#ffb703"
-        strokeWidth={8}
-        className={`${styles.glow} ${active ? styles.glowOn : ''}`}
-      />
+      {/* soft ground shadow */}
+      <circle cx={5} cy={8} r={SCENE_RADIUS} fill={SHADOW} opacity={0.16} />
 
-      <g clipPath={`url(#${clipId})`}>
-        <g filter={active ? undefined : 'url(#salmon-dim)'}>
-          {/* Remount on every activation so the scene's animation starts from the beginning. */}
-          <g key={activation} className={active ? undefined : styles.paused}>
-            <Scene />
+      <g className={styles.medallion} opacity={dimmed ? 0.8 : 1}>
+        <circle r={SCENE_RADIUS} fill={tint} />
+        <g clipPath={`url(#${clipId})`}>
+          <g filter={active ? undefined : 'url(#salmon-dim)'}>
+            {/* Remount on every activation so the scene's animation starts from the beginning. */}
+            <g key={activation} className={active ? undefined : styles.paused}>
+              <Scene />
+            </g>
+          </g>
+
+          {/* A frosted disc behind the lower window turns away when the stage is reached. */}
+          <g clipPath={`url(#${windowClipId})`}>
+            <g className={`${styles.shutter} ${active ? styles.shutterOpen : ''}`}>
+              <path d={windowPath} fill="#f4efe6" opacity={0.6} />
+              <path
+                d={`M ${-WINDOW_RADIUS + 34} 18 L ${-WINDOW_RADIUS + 64} 18 L -20 ${
+                  WINDOW_RADIUS - 8
+                } L -56 ${WINDOW_RADIUS - 24} Z`}
+                fill="#ffffff"
+                opacity={0.4}
+              />
+            </g>
           </g>
         </g>
 
-        {/* Frosted disc behind the lower window that turns away when the stage is active. */}
-        <g clipPath={`url(#${windowClipId})`}>
-          <g className={`${styles.shutter} ${active ? styles.shutterOpen : ''}`}>
-            <path d={windowPath} fill="#cfd8de" opacity={0.85} />
-            <path
-              d={`M ${-WINDOW_RADIUS + 30} 20 L ${
-                -WINDOW_RADIUS + 70
-              } 20 L -10 ${WINDOW_RADIUS} L -60 ${WINDOW_RADIUS - 20} Z`}
-              fill="#ffffff"
-              opacity={0.35}
-            />
-          </g>
-        </g>
+        <path d={windowPath} fill="none" stroke={toneOf(PAL.wood)} strokeWidth={DETAIL} />
+        <circle r={SCENE_RADIUS} fill="none" stroke={INK} strokeWidth={OUTLINE} />
       </g>
 
-      <path d={windowPath} fill="none" stroke="#b08d4a" strokeWidth={4} />
-      <circle r={SCENE_RADIUS} fill="none" stroke="#1f6fb3" strokeWidth={6} />
+      {/* the red pen rings the stage the arrow has reached */}
+      <circle
+        r={SCENE_RADIUS + 11}
+        fill="none"
+        stroke={RED}
+        strokeWidth={4.5}
+        strokeLinecap="round"
+        className={`${styles.ring} ${active ? styles.ringOn : ''}`}
+      />
     </g>
   );
 };
 
-interface CaptionProps {
-  index: number;
-  active: boolean;
-}
-
-const Caption: FC<CaptionProps> = ({ index, active }) => {
+const StageLabel: FC<{ index: number; active: boolean; dimmed: boolean }> = ({
+  index,
+  active,
+  dimmed,
+}) => {
   const { x, y } = STAGE_POSITIONS[index];
-  const { title, lines } = STAGES[index];
+  const { name, note } = STAGES[index];
   const isTop = y === TOP_Y;
-  const startY = isTop ? 42 : BOTTOM_Y + SCENE_RADIUS + 34;
+  const nameY = isTop ? 72 : BOTTOM_Y + SCENE_RADIUS + 54;
 
   return (
-    <g className={styles.caption} opacity={active ? 1 : 0.7} textAnchor="middle">
-      <text x={x} y={startY} fontSize={23} fontWeight={700} fill={active ? '#c92a2a' : '#333'}>
-        {title}
+    <g className={styles.label} opacity={dimmed ? 0.7 : 1} textAnchor="middle">
+      <text x={x} y={nameY} fontSize={32} className={styles.smallCaps} fill={active ? RED : INK}>
+        {`${index + 1}. ${name}`}
       </text>
-      {lines.map((line, i) => (
-        <text key={i} x={x} y={startY + 23 + i * 21} fontSize={16} fill="#333">
-          {line}
-        </text>
-      ))}
+      <text x={x} y={nameY + 32} fontSize={26} fill={LN}>
+        {note}
+      </text>
     </g>
   );
 };
@@ -177,7 +195,7 @@ const SalmonLifeCycle: FC = () => {
         return;
       }
       // Ease out near the target, but never crawl.
-      const speed = clamp(Math.abs(remaining) * 2.2, 0.5, 1.6);
+      const speed = clamp(Math.abs(remaining) * 1.8, 0.4, 1.2);
       const delta = Math.sign(remaining) * Math.min(Math.abs(remaining), speed * dt);
       updateProgress(progressRef.current + delta);
       frameRef.current = requestAnimationFrame(step);
@@ -253,11 +271,17 @@ const SalmonLifeCycle: FC = () => {
   const arrow = pointAtProgress(progress);
   const knobAngle = progress * 360;
   const trackMidY = (TRACK.top + TRACK.bottom) / 2;
-  const labelRadius = KNOB.r + 22;
+  const labelRadius = KNOB.r + 26;
+  const rail = PAL.tan;
 
   return (
-    <Center>
-      <Card w="100%" maw={1200} p="md">
+    <div className={`${styles.desk} ${gaegu.variable} ${youngSerif.variable}`}>
+      <div className={styles.card}>
+        <div className={styles.cap}>
+          <h3>The salmon life cycle</h3>
+          <span>six stops, round and round</span>
+        </div>
+
         <svg
           className={styles.board}
           viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
@@ -266,12 +290,7 @@ const SalmonLifeCycle: FC = () => {
         >
           <defs>
             <filter id="salmon-dim">
-              <feColorMatrix type="saturate" values="0.15" />
-              <feComponentTransfer>
-                <feFuncR type="linear" slope="0.75" intercept="0.12" />
-                <feFuncG type="linear" slope="0.75" intercept="0.12" />
-                <feFuncB type="linear" slope="0.75" intercept="0.14" />
-              </feComponentTransfer>
+              <feColorMatrix type="saturate" values="0.6" />
             </filter>
             <path
               id="salmon-knob-label"
@@ -281,64 +300,70 @@ const SalmonLifeCycle: FC = () => {
             />
           </defs>
 
-          {/* board */}
-          <rect x={0} y={0} width={WIDTH} height={HEIGHT} rx={60} fill="#cfe3ee" />
-          <rect
-            x={150}
-            y={TOP_Y}
-            width={1240}
-            height={BOTTOM_Y - TOP_Y}
-            rx={(BOTTOM_Y - TOP_Y) / 2}
-            fill="#fdf8f1"
-          />
-
           {STAGES.map((_, i) => (
-            <Caption key={i} index={i} active={activeStage === i} />
+            <StageLabel
+              key={i}
+              index={i}
+              active={activeStage === i}
+              dimmed={activeStage !== null && activeStage !== i}
+            />
           ))}
 
-          {STAGES.map((_, i) => (
-            <StageCircle key={i} index={i} active={activeStage === i} activation={activations[i]} />
-          ))}
-
-          {/* track */}
-          <rect
-            x={TRACK.left - 95}
-            y={trackMidY - 95}
-            width={TRACK.right - TRACK.left + 190}
-            height={190}
-            rx={95}
-            fill="#e4e8ea"
-            stroke="#b9c1c6"
-            strokeWidth={4}
+          {/* the rail the arrow runs round */}
+          <path
+            d={TRACK_PATH}
+            fill="none"
+            stroke={SHADOW}
+            strokeWidth={34}
+            opacity={0.14}
+            transform="translate(4 7)"
           />
-          <path d={TRACK_PATH} fill="none" stroke="#2d2d2d" strokeWidth={12} />
-          <path d={TRACK_PATH} fill="none" stroke="#5a5a5a" strokeWidth={4} />
+          <path d={TRACK_PATH} fill="none" stroke={INK} strokeWidth={34 + OUTLINE * 2} />
+          <path d={TRACK_PATH} fill="none" stroke={rail} strokeWidth={34} />
+          <path d={TRACK_PATH} fill="none" stroke={toneOf(rail)} strokeWidth={DETAIL} />
           <text
             x={(TRACK.left + TRACK.right) / 2}
-            y={trackMidY + 14}
+            y={trackMidY + 15}
             textAnchor="middle"
             fontSize={42}
-            fontWeight={700}
-            fill="#c0392b"
+            fill={INK}
+            className={styles.serif}
           >
             The Salmon Life Cycle
           </text>
 
-          {/* arrow */}
+          {STAGES.map((_, i) => (
+            <StageCircle
+              key={i}
+              index={i}
+              active={activeStage === i}
+              dimmed={activeStage !== null && activeStage !== i}
+              activation={activations[i]}
+            />
+          ))}
+
+          {/* the red arrow */}
           <g transform={`translate(${arrow.x} ${arrow.y}) rotate(${arrow.angle})`}>
             <polygon
-              points="26,0 -10,-18 -10,18"
-              fill="#e8402a"
-              stroke="#8f1d10"
-              strokeWidth={2.5}
+              points="28,0 -8,-19 -8,19"
+              fill={RED}
+              stroke={INK}
+              strokeWidth={OUTLINE}
               strokeLinejoin="round"
+            />
+            <path
+              d="M 18 -2 L 0 -11"
+              stroke="#ffffff"
+              strokeWidth={2}
+              opacity={0.45}
+              strokeLinecap="round"
             />
           </g>
 
-          {/* knob */}
-          <text fontSize={19} fontWeight={600} fill="#222">
+          {/* the knob */}
+          <text fontSize={28} fill={LN}>
             <textPath href="#salmon-knob-label" startOffset="50%" textAnchor="middle">
-              Turn to follow the salmon&apos;s journey ➜
+              turn me
             </textPath>
           </text>
           <g
@@ -354,30 +379,39 @@ const SalmonLifeCycle: FC = () => {
             onPointerCancel={onPointerUp}
             onKeyDown={onKeyDown}
           >
-            <circle r={KNOB.r + 8} fill="#7a1f12" />
-            <circle r={KNOB.r} fill="#f04a23" className={styles.knobFocus} />
+            <circle cx={5} cy={8} r={KNOB.r + 8} fill={SHADOW} opacity={0.18} />
+            <circle r={KNOB.r + 8} fill={toneOf(PAL.knob)} stroke={INK} strokeWidth={OUTLINE} />
+            <circle
+              r={KNOB.r}
+              fill={PAL.knob}
+              stroke={INK}
+              strokeWidth={DETAIL}
+              className={styles.knobFocus}
+            />
             <g transform={`rotate(${knobAngle})`}>
-              <circle r={KNOB.r - 10} fill="none" stroke="#ff7a55" strokeWidth={3} />
+              <circle r={KNOB.r - 12} fill="none" stroke={toneOf(PAL.knob)} strokeWidth={DETAIL} />
               <circle
                 cx={0}
-                cy={KNOB.r - 26}
+                cy={KNOB.r - 28}
                 r={13}
-                fill="#9aa3a8"
-                stroke="#5d666b"
-                strokeWidth={3}
+                fill={PAL.steel}
+                stroke={INK}
+                strokeWidth={OUTLINE}
               />
-              <circle cx={-3} cy={KNOB.r - 29} r={4} fill="#e6eaec" />
+              <circle cx={-3.5} cy={KNOB.r - 31.5} r={4} fill="#ffffff" opacity={0.8} />
             </g>
           </g>
         </svg>
 
-        <Text ta="center" mt="sm" size="lg" fw={600} aria-live="polite">
+        <p className={styles.note} aria-live="polite">
           {activeStage === null
-            ? 'Click or turn the red knob to follow the salmon’s story.'
-            : `Stage ${activeStage + 1} of ${STAGE_COUNT}: ${STAGES[activeStage].title}`}
-        </Text>
-      </Card>
-    </Center>
+            ? 'Turn the red knob, or click it, to follow one salmon round its life. Each stop wakes up as the arrow reaches it.'
+            : `${activeStage + 1} of ${STAGE_COUNT}, ${STAGES[activeStage].name}: ${
+                STAGES[activeStage].story
+              }`}
+        </p>
+      </div>
+    </div>
   );
 };
 
