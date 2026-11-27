@@ -15,24 +15,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
       - name: Enable corepack
         run: corepack enable
-      - name: Setup node
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18'
       - name: Setup cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           # this is not the recommended way to set up cache,
           # but it is faster to include node_modules
           path: |
             ${{ github.workspace }}/node_modules
             ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-node-16-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('.nvmrc') }}-${{ hashFiles('yarn.lock') }}
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
       - name: Lint code
         run: |
           yarn eslint .
