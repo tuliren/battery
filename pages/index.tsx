@@ -1,8 +1,9 @@
 import { Container, Tabs, Title, rem } from '@mantine/core';
-import { IconBatteryCharging2, IconWind } from '@tabler/icons-react';
+import { IconBatteryCharging2, IconFish, IconWind } from '@tabler/icons-react';
 import type { NextPage } from 'next';
 
 import Battery from '@/battery/Battery';
+import SalmonLifeCycle from '@/salmon/SalmonLifeCycle';
 import Speedometer from '@/speedometer/Speedometer';
 
 const iconStyle = { width: rem(30), height: rem(30) };
@@ -31,6 +32,14 @@ const Home: NextPage = () => {
               Speedometer
             </Title>
           </Tabs.Tab>
+          <Tabs.Tab
+            leftSection={<IconFish color="#e8590c" stroke={iconStroke} style={iconStyle} />}
+            value="salmon"
+          >
+            <Title c="orange.8" order={2}>
+              Salmon
+            </Title>
+          </Tabs.Tab>
         </Tabs.List>
 
         <Tabs.Panel value="battery">
@@ -39,6 +48,10 @@ const Home: NextPage = () => {
 
         <Tabs.Panel value="speedometer">
           <Speedometer />
+        </Tabs.Panel>
+
+        <Tabs.Panel value="salmon">
+          <SalmonLifeCycle />
         </Tabs.Panel>
       </Tabs>
     </Container>

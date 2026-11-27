@@ -26,8 +26,6 @@ import NumberSlider from '@/common/NumberSlider';
 
 import styles from './Speedometer.module.css';
 
-interface SpeedometerProps {}
-
 const minSpeedLimit = 25;
 const maxSpeedLimit = 70;
 
@@ -72,7 +70,7 @@ const getSpeedColor = (theme: MantineTheme, speedCategory: SpeedCategory): strin
   }
 };
 
-const Speedometer: FC<SpeedometerProps> = ({}) => {
+const Speedometer: FC = () => {
   const theme = useMantineTheme();
   const [speed, setSpeed] = useState(25);
   const [speedLimit, setSpeedLimit] = useState(30);
@@ -85,25 +83,21 @@ const Speedometer: FC<SpeedometerProps> = ({}) => {
   const displayColor = getSpeedColor(theme, speedCategory);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (activeStatus === Activity.Accelerating) {
-      if (speed < maxSpeed) {
-        interval = setInterval(() => {
-          setSpeed((prev) => (prev + 1 > maxSpeed ? maxSpeed : prev + 1));
-        }, 50);
-      } else {
-        setActiveStatus(Activity.Idle);
-      }
-    } else if (activeStatus === Activity.Decelerating) {
-      if (speed > minSpeed) {
-        interval = setInterval(() => {
-          setSpeed((prev) => (prev - 1 < minSpeed ? minSpeed : prev - 1));
-        }, 50);
-      } else {
-        setActiveStatus(Activity.Idle);
-      }
+    if (activeStatus === Activity.Idle) {
+      return;
     }
-    return () => clearInterval(interval);
+    const accelerating = activeStatus === Activity.Accelerating;
+    const atLimit = accelerating ? speed >= maxSpeed : speed <= minSpeed;
+    const timer = setTimeout(() => {
+      if (atLimit) {
+        setActiveStatus(Activity.Idle);
+      } else {
+        setSpeed((prev) =>
+          accelerating ? Math.min(maxSpeed, prev + 1) : Math.max(minSpeed, prev - 1)
+        );
+      }
+    }, 50);
+    return () => clearTimeout(timer);
   }, [activeStatus, maxSpeed, minSpeed, speed]);
 
   return (

@@ -24,9 +24,7 @@ enum Activity {
   IDLE = 'idle',
 }
 
-interface BatteryProps {}
-
-const Battery: FC<BatteryProps> = ({}) => {
+const Battery: FC = () => {
   const [chargingStatus, setChargingStatus] = useState<Activity.CHARGING | Activity.IDLE>(
     Activity.IDLE
   );
@@ -47,30 +45,32 @@ const Battery: FC<BatteryProps> = ({}) => {
       : highBatteryColor;
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (activeStatus === Activity.CHARGING) {
-      setChargingStatus(Activity.CHARGING);
-      if (percentage < maxPercentage) {
-        interval = setInterval(() => {
-          setPercentage((prev) => (prev + 1 > maxPercentage ? maxPercentage : prev + 1));
-        }, 50);
-      } else {
-        setChargingStatus(Activity.IDLE);
-        setActiveStatus(Activity.IDLE);
-      }
-    } else if (activeStatus === Activity.RELEASING) {
-      setChargingStatus(Activity.IDLE);
-      if (percentage > minPercentage) {
-        interval = setInterval(() => {
-          setPercentage((prev) => (prev - 1 < minPercentage ? minPercentage : prev - 1));
-        }, 50);
-      } else {
-        setChargingStatus(Activity.IDLE);
-        setActiveStatus(Activity.IDLE);
-      }
+    if (activeStatus === Activity.IDLE) {
+      return;
     }
-    return () => clearInterval(interval);
+    const charging = activeStatus === Activity.CHARGING;
+    const atLimit = charging ? percentage >= maxPercentage : percentage <= minPercentage;
+    const timer = setTimeout(() => {
+      if (atLimit) {
+        setChargingStatus(Activity.IDLE);
+        setActiveStatus(Activity.IDLE);
+      } else {
+        setPercentage((prev) =>
+          charging ? Math.min(maxPercentage, prev + 1) : Math.max(minPercentage, prev - 1)
+        );
+      }
+    }, 50);
+    return () => clearTimeout(timer);
   }, [activeStatus, percentage]);
+
+  const changeActivity = (value: Activity) => {
+    setActiveStatus(value);
+    if (value === Activity.CHARGING) {
+      setChargingStatus(Activity.CHARGING);
+    } else if (value === Activity.RELEASING) {
+      setChargingStatus(Activity.IDLE);
+    }
+  };
 
   return (
     <Center>
@@ -166,7 +166,7 @@ const Battery: FC<BatteryProps> = ({}) => {
             <Grid.Col span={8}>
               <ControlButtons<Activity>
                 currentValue={activeStatus}
-                setCurrentValue={setActiveStatus}
+                setCurrentValue={changeActivity}
                 values={[
                   { value: Activity.IDLE, color: 'blue', icon: IconBattery2, label: 'Idle' },
                   {
